@@ -5,7 +5,7 @@ use std::{
     ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign},
 };
 
-use super::{Vec2d, Vec4d};
+use super::{vec3f, Vec2d, Vec3f, Vec4d};
 
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub struct Vec3d {
@@ -472,6 +472,10 @@ impl Vec3d {
 
     pub fn to_tuple(self) -> (f64, f64, f64) {
         (self.x, self.y, self.z)
+    }
+
+    pub fn as_vec3f(self) -> Vec3f {
+        vec3f(self.x as f32, self.y as f32, self.z as f32)
     }
 
     pub fn to_homogeneous_coord_point(self) -> Vec4d {

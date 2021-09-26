@@ -5,7 +5,7 @@ use std::{
     ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign},
 };
 
-use super::{Vec2f, Vec3f};
+use super::{vec4d, Vec2f, Vec3f, Vec4d};
 
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub struct Vec4f {
@@ -551,6 +551,10 @@ impl Vec4f {
 
     pub fn to_tuple(self) -> (f32, f32, f32) {
         (self.x, self.y, self.z)
+    }
+
+    pub fn as_vec4d(self) -> Vec4d {
+        vec4d(self.x as f64, self.y as f64, self.z as f64, self.w as f64)
     }
 }
 
