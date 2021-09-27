@@ -474,7 +474,7 @@ impl Vec3f {
         (self.x, self.y, self.z)
     }
 
-    pub fn as_vec3d(self) -> Vec3d {
+    pub fn to_vec3d(self) -> Vec3d {
         vec3d(self.x as f64, self.y as f64, self.z as f64)
     }
 

@@ -462,7 +462,7 @@ impl Vec2f {
         (self.x, self.y)
     }
 
-    pub fn as_vec2d(self) -> Vec2d {
+    pub fn to_vec2d(self) -> Vec2d {
         vec2d(self.x as f64, self.y as f64)
     }
 }

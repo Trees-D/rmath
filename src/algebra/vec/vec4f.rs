@@ -553,7 +553,7 @@ impl Vec4f {
         (self.x, self.y, self.z, self.w)
     }
 
-    pub fn as_vec4d(self) -> Vec4d {
+    pub fn to_vec4d(self) -> Vec4d {
         vec4d(self.x as f64, self.y as f64, self.z as f64, self.w as f64)
     }
 }
