@@ -545,12 +545,12 @@ impl Vec4d {
 }
 
 impl Vec4d {
-    pub fn to_array(self) -> [f64; 3] {
-        [self.x, self.y, self.z]
+    pub fn to_array(self) -> [f64; 4] {
+        [self.x, self.y, self.z, self.w]
     }
 
-    pub fn to_tuple(self) -> (f64, f64, f64) {
-        (self.x, self.y, self.z)
+    pub fn to_tuple(self) -> (f64, f64, f64, f64) {
+        (self.x, self.y, self.z, self.w)
     }
 
     pub fn as_vec4f(self) -> Vec4f {
