@@ -540,7 +540,7 @@ impl Vec4d {
     }
 
     pub fn is_normalized(self) -> bool {
-        (self.length_squared() - 1.0f64).abs() <= f64::EPSILON
+        (self.length_squared() - 1.0f64).abs() < f64::EPSILON
     }
 }
 

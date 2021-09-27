@@ -437,7 +437,7 @@ impl Vec2f {
     }
 
     pub fn is_normalized(self) -> bool {
-        (self.length_squared() - 1.0f32).abs() <= f32::EPSILON
+        (self.length_squared() - 1.0f32).abs() < f32::EPSILON
     }
 
     pub fn angle_between(self, rhs: Self) -> f32 {

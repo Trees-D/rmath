@@ -455,7 +455,7 @@ impl Vec3d {
     }
 
     pub fn is_normalized(self) -> bool {
-        (self.length_squared() - 1.0f64).abs() <= f64::EPSILON
+        (self.length_squared() - 1.0f64).abs() < f64::EPSILON
     }
 
     pub fn angle_between(self, rhs: Self) -> f64 {
