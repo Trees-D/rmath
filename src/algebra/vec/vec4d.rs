@@ -492,7 +492,7 @@ impl Vec4d {
 
 impl Vec4d {
     pub fn dot(self, rhs: Self) -> f64 {
-        self.x * rhs.x + self.y * rhs.y + self.z * rhs.z
+        self.x * rhs.x + self.y * rhs.y + self.z * rhs.z + self.w * rhs.w
     }
 
     pub fn length(self) -> f64 {
