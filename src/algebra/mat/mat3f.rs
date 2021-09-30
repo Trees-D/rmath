@@ -5,7 +5,7 @@ use std::{
     ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Sub, SubAssign},
 };
 
-use crate::algebra::{vec3f, Vec3f};
+use crate::algebra::{vec3f, Mat2f, Mat4f, Vec3f};
 
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub struct Mat3f {
@@ -305,8 +305,10 @@ impl Mat3f {
         let (m10, m11, m12) = self.y_axis.to_tuple();
         let (m20, m21, m22) = self.z_axis.to_tuple();
 
-        m00 * (m11 * m22 - m21 * m12) - m10 * (m01 * m22 - m21 * m02)
-            + m20 * (m01 * m12 - m11 * m02)
+        m00 * m11 * m22 + m01 * m12 * m20 + m02 * m10 * m21
+            - m00 * m12 * m21
+            - m01 * m10 * m22
+            - m02 * m11 * m20
     }
 
     pub fn inverse(&self) -> Self {
@@ -318,21 +320,24 @@ impl Mat3f {
         let (m10, m11, m12) = self.y_axis.to_tuple();
         let (m20, m21, m22) = self.z_axis.to_tuple();
 
-        let a00 = (m11 * m22 - m21 * m12) * inv_det;
-        let a10 = -(m10 * m22 - m20 * m12) * inv_det;
-        let a20 = (m10 * m21 - m20 * m11) * inv_det;
-        let a01 = -(m01 * m22 - m21 * m02) * inv_det;
-        let a11 = (m00 * m22 - m20 * m02) * inv_det;
-        let a21 = -(m00 * m21 - m20 * m01) * inv_det;
-        let a02 = (m01 * m12 - m11 * m02) * inv_det;
-        let a12 = -(m00 * m12 - m10 * m02) * inv_det;
-        let a22 = (m00 * m11 - m10 * m01) * inv_det;
+        let a00 = m11 * m22 - m12 * m21;
+        let a01 = -(m10 * m22 - m12 * m20);
+        let a02 = m10 * m21 - m11 * m20;
+
+        let a10 = -(m01 * m22 - m02 * m21);
+        let a11 = m00 * m22 - m02 * m20;
+        let a12 = -(m00 * m21 - m01 * m20);
+
+        let a20 = m01 * m12 - m02 * m11;
+        let a21 = -(m00 * m12 - m02 * m10);
+        let a22 = m00 * m11 - m01 * m10;
 
         Self::new(
-            vec3f(a00, a01, a02),
-            vec3f(a10, a11, a12),
-            vec3f(a20, a21, a22),
+            vec3f(a00, a10, a20),
+            vec3f(a01, a11, a21),
+            vec3f(a02, a12, a22),
         )
+        .mul(inv_det)
     }
 
     pub fn tray_inverse(&self) -> Option<Self> {
@@ -346,21 +351,40 @@ impl Mat3f {
         let (m10, m11, m12) = self.y_axis.to_tuple();
         let (m20, m21, m22) = self.z_axis.to_tuple();
 
-        let a00 = (m11 * m22 - m21 * m12) * inv_det;
-        let a10 = -(m10 * m22 - m20 * m12) * inv_det;
-        let a20 = (m10 * m21 - m20 * m11) * inv_det;
-        let a01 = -(m01 * m22 - m21 * m02) * inv_det;
-        let a11 = (m00 * m22 - m20 * m02) * inv_det;
-        let a21 = -(m00 * m21 - m20 * m01) * inv_det;
-        let a02 = (m01 * m12 - m11 * m02) * inv_det;
-        let a12 = -(m00 * m12 - m10 * m02) * inv_det;
-        let a22 = (m00 * m11 - m10 * m01) * inv_det;
+        let a00 = m11 * m22 - m12 * m21;
+        let a01 = -(m10 * m22 - m12 * m20);
+        let a02 = m10 * m21 - m11 * m20;
 
-        Some(Self::new(
-            vec3f(a00, a01, a02),
-            vec3f(a10, a11, a12),
-            vec3f(a20, a21, a22),
-        ))
+        let a10 = -(m01 * m22 - m02 * m21);
+        let a11 = m00 * m22 - m02 * m20;
+        let a12 = -(m00 * m21 - m01 * m20);
+
+        let a20 = m01 * m12 - m02 * m11;
+        let a21 = -(m00 * m12 - m02 * m10);
+        let a22 = m00 * m11 - m01 * m10;
+
+        Some(
+            Self::new(
+                vec3f(a00, a10, a20),
+                vec3f(a01, a11, a21),
+                vec3f(a02, a12, a22),
+            )
+            .mul(inv_det),
+        )
+    }
+}
+
+impl From<Mat2f> for Mat3f {
+    fn from(m: Mat2f) -> Self {
+        mat3f(m[0][0], m[0][1], 0.0, m[1][0], m[1][1], 0.0, 0.0, 0.0, 1.0)
+    }
+}
+
+impl From<Mat4f> for Mat3f {
+    fn from(m: Mat4f) -> Self {
+        mat3f(
+            m[0][0], m[0][1], m[0][2], m[1][0], m[1][1], m[1][2], m[2][0], m[2][1], m[2][2],
+        )
     }
 }
 
@@ -387,5 +411,30 @@ impl Mat3f {
             vec3f(0.0, diagonal.y(), 0.0),
             vec3f(0.0, 0.0, diagonal.z()),
         )
+    }
+}
+
+impl Mat3f {
+    pub fn to_array(self) -> [f32; 9] {
+        [
+            self[0][0], self[0][1], self[0][2], self[1][0], self[1][1], self[1][2], self[2][0],
+            self[2][1], self[2][2],
+        ]
+    }
+
+    pub fn to_array_2d(self) -> [[f32; 3]; 3] {
+        [
+            [self[0][0], self[0][1], self[0][2]],
+            [self[1][0], self[1][1], self[1][2]],
+            [self[2][0], self[2][1], self[2][2]],
+        ]
+    }
+
+    pub fn to_mat2f(self) -> Mat2f {
+        Mat2f::from(self)
+    }
+
+    pub fn to_mat4f(self) -> Mat4f {
+        Mat4f::from(self)
     }
 }

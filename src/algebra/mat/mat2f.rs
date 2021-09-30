@@ -5,7 +5,7 @@ use std::{
     ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Sub, SubAssign},
 };
 
-use crate::algebra::{vec2f, Vec2f};
+use crate::algebra::{vec2f, Mat3f, Mat4f, Vec2f};
 
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub struct Mat2f {
@@ -257,12 +257,12 @@ impl Mat2f {
         ruby_assert!(!(det.abs() < f32::EPSILON));
 
         let inv_det = det.recip();
-        let m00 = self[1][1] * inv_det;
-        let m01 = -self[0][1] * inv_det;
-        let m10 = -self[1][0] * inv_det;
-        let m11 = self[0][0] * inv_det;
+        let a00 = self[1][1];
+        let a01 = -self[1][0];
+        let a10 = -self[0][1];
+        let a11 = self[0][0];
 
-        Self::new(vec2f(m00, m01), vec2f(m10, m11))
+        Self::new(vec2f(a00, a10), vec2f(a01, a11)).mul(inv_det)
     }
 
     pub fn tray_inverse(&self) -> Option<Self> {
@@ -272,12 +272,24 @@ impl Mat2f {
         }
 
         let inv_det = det.recip();
-        let m00 = self[1][1] * inv_det;
-        let m01 = -self[0][1] * inv_det;
-        let m10 = -self[1][0] * inv_det;
-        let m11 = self[0][0] * inv_det;
+        let a00 = self[1][1];
+        let a01 = -self[1][0];
+        let a10 = -self[0][1];
+        let a11 = self[0][0];
 
-        Some(Self::new(vec2f(m00, m01), vec2f(m10, m11)))
+        Some(Self::new(vec2f(a00, a10), vec2f(a01, a11)).mul(inv_det))
+    }
+}
+
+impl From<Mat3f> for Mat2f {
+    fn from(m: Mat3f) -> Self {
+        mat2f(m[0][0], m[0][1], m[1][0], m[1][1])
+    }
+}
+
+impl From<Mat4f> for Mat2f {
+    fn from(m: Mat4f) -> Self {
+        mat2f(m[0][0], m[0][1], m[1][0], m[1][1])
     }
 }
 
@@ -292,5 +304,23 @@ impl Mat2f {
 
     pub fn from_diagonal(diagonal: Vec2f) -> Self {
         Self::new(vec2f(diagonal.x(), 0.0), vec2f(0.0, diagonal.y()))
+    }
+}
+
+impl Mat2f {
+    pub fn to_array(self) -> [f32; 4] {
+        [self[0][0], self[0][1], self[1][0], self[1][1]]
+    }
+
+    pub fn to_array_2d(self) -> [[f32; 2]; 2] {
+        [[self[0][0], self[0][1]], [self[1][0], self[1][1]]]
+    }
+
+    pub fn to_mat3f(self) -> Mat3f {
+        Mat3f::from(self)
+    }
+
+    pub fn to_mat4f(self) -> Mat4f {
+        Mat4f::from(self)
     }
 }

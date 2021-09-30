@@ -5,7 +5,7 @@ use std::{
     ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Sub, SubAssign},
 };
 
-use crate::algebra::{vec4f, Vec4f};
+use crate::algebra::{vec4f, Mat2f, Mat3f, Vec3f, Vec4f};
 
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub struct Mat4f {
@@ -550,6 +550,24 @@ impl Mat4f {
     }
 }
 
+impl From<Mat2f> for Mat4f {
+    fn from(m: Mat2f) -> Self {
+        mat4f(
+            m[0][0], m[0][1], 0.0, 0.0, m[1][0], m[1][1], 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0,
+            0.0, 1.0,
+        )
+    }
+}
+
+impl From<Mat3f> for Mat4f {
+    fn from(m: Mat3f) -> Self {
+        mat4f(
+            m[0][0], m[0][1], m[0][2], 0.0, m[1][0], m[1][1], m[1][2], 0.0, m[2][0], m[2][1],
+            m[2][2], 0.0, 0.0, 0.0, 0.0, 1.0,
+        )
+    }
+}
+
 impl Mat4f {
     pub fn from_array(m: [f32; 16]) -> Self {
         Self::new(
@@ -576,5 +594,134 @@ impl Mat4f {
             vec4f(0.0, 0.0, diagonal.z(), 0.0),
             vec4f(0.0, 0.0, 0.0, diagonal.w()),
         )
+    }
+}
+
+impl Mat4f {
+    pub fn to_array(self) -> [f32; 16] {
+        [
+            self[0][0], self[0][1], self[0][2], self[0][3], self[1][0], self[1][1], self[1][2],
+            self[1][3], self[2][0], self[2][1], self[2][2], self[2][3], self[3][0], self[3][1],
+            self[3][2], self[3][3],
+        ]
+    }
+
+    pub fn to_array_2d(self) -> [[f32; 4]; 4] {
+        [
+            [self[0][0], self[0][1], self[0][2], self[0][3]],
+            [self[1][0], self[1][1], self[1][2], self[1][3]],
+            [self[2][0], self[2][1], self[2][2], self[2][3]],
+            [self[3][0], self[3][1], self[3][2], self[3][3]],
+        ]
+    }
+
+    pub fn to_mat2f(self) -> Mat2f {
+        Mat2f::from(self)
+    }
+
+    pub fn to_mat3f(self) -> Mat3f {
+        Mat3f::from(self)
+    }
+}
+
+impl Mat4f {
+    pub fn translation(translate: Vec3f) -> Self {
+        Self::new(
+            vec4f(1.0, 0.0, 0.0, translate.x()),
+            vec4f(0.0, 1.0, 0.0, translate.y()),
+            vec4f(0.0, 0.0, 1.0, translate.z()),
+            vec4f(0.0, 0.0, 0.0, 1.0),
+        )
+    }
+
+    pub fn rotation_x(angle: f32) -> Self {
+        let (sin, cos) = angle.to_radians().sin_cos();
+        Self::new(
+            vec4f(1.0, 0.0, 0.0, 0.0),
+            vec4f(0.0, cos, -sin, 0.0),
+            vec4f(0.0, sin, cos, 0.0),
+            vec4f(0.0, 0.0, 0.0, 1.0),
+        )
+    }
+
+    pub fn rotation_y(angle: f32) -> Self {
+        let (sin, cos) = angle.to_radians().sin_cos();
+        Self::new(
+            vec4f(cos, 0.0, sin, 0.0),
+            vec4f(0.0, 1.0, 0.0, 0.0),
+            vec4f(-sin, 0.0, cos, 0.0),
+            vec4f(0.0, 0.0, 0.0, 1.0),
+        )
+    }
+
+    pub fn rotation_z(angle: f32) -> Self {
+        let (sin, cos) = angle.to_radians().sin_cos();
+        Self::new(
+            vec4f(cos, -sin, 0.0, 0.0),
+            vec4f(sin, cos, 0.0, 0.0),
+            vec4f(0.0, 0.0, 1.0, 0.0),
+            vec4f(0.0, 0.0, 0.0, 1.0),
+        )
+    }
+
+    pub fn rotation_axis(axis: Vec3f, angle: f32) -> Self {
+        let axis = axis.normalize();
+        let (sin, cos) = angle.to_radians().sin_cos();
+        let rotation = cos * Self::identity()
+            + (1.0 - cos)
+                * Self::new(
+                    axis.x().mul(axis).to_homogeneous_coord_vector(),
+                    axis.y().mul(axis).to_homogeneous_coord_vector(),
+                    axis.z().mul(axis).to_homogeneous_coord_vector(),
+                    Vec4f::zero(),
+                )
+            + sin
+                * Self::new(
+                    vec4f(0.0, -axis.z(), axis.y(), 0.0),
+                    vec4f(axis.z(), 0.0, -axis.x(), 0.0),
+                    vec4f(-axis.y(), axis.x(), 0.0, 0.0),
+                    Vec4f::zero(),
+                );
+        rotation
+    }
+
+    pub fn scale(scale: Vec3f) -> Self {
+        Self::new(
+            vec4f(scale.x(), 0.0, 0.0, 0.0),
+            vec4f(0.0, scale.y(), 0.0, 0.0),
+            vec4f(0.0, 0.0, scale.z(), 0.0),
+            vec4f(0.0, 0.0, 0.0, 1.0),
+        )
+    }
+
+    pub fn look_at(eye: Vec3f, target: Vec3f, up: Vec3f) -> Self {
+        let g = (target - eye).normalize();
+        let u = up.normalize();
+        let s = g.cross(u).normalize();
+        let u = s.cross(g);
+        let g = -g;
+
+        Self::new(
+            vec4f(s.x(), s.y(), s.z(), s.dot(-eye)),
+            vec4f(u.x(), u.y(), u.z(), u.dot(-eye)),
+            vec4f(g.x(), g.y(), g.z(), g.dot(-eye)),
+            vec4f(0.0, 0.0, 0.0, 1.0),
+        )
+    }
+
+    pub fn perspective(fovy: f32, aspect: f32, z_near: f32, z_far: f32) -> Self {
+        ruby_assert!(aspect.abs() > f32::EPSILON);
+
+        let (n, f) = (z_near, z_far);
+        let tan_half_theta = fovy.to_radians().mul(0.5).tan();
+
+        let perspective = Self::new(
+            vec4f(tan_half_theta.mul(aspect).recip(), 0.0, 0.0, 0.0),
+            vec4f(0.0, tan_half_theta.recip(), 0.0, 0.0),
+            vec4f(0.0, 0.0, -(n + f) / (f - n), -2.0 * n * f / (f - n)),
+            vec4f(0.0, 0.0, -1.0, 0.0),
+        );
+
+        perspective
     }
 }
