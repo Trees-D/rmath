@@ -5,7 +5,7 @@ use std::{
     ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Sub, SubAssign},
 };
 
-use crate::algebra::{vec3f, Mat2f, Mat4f, Vec3f};
+use crate::algebra::{vec3f, Mat2f, Mat3d, Mat4f, Vec3f};
 
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub struct Mat3f {
@@ -436,5 +436,13 @@ impl Mat3f {
 
     pub fn to_mat4f(self) -> Mat4f {
         Mat4f::from(self)
+    }
+
+    pub fn to_mat3d(self) -> Mat3d {
+        Mat3d::new(
+            self.x_axis.to_vec3d(),
+            self.y_axis.to_vec3d(),
+            self.z_axis.to_vec3d(),
+        )
     }
 }
