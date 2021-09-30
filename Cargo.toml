@@ -2,6 +2,8 @@
 name = "rmath"
 version = "0.1.0"
 edition = "2018"
+authors = ["DArbres <paladin100100@gmail.com>"]
+description = "A simple 3D math library for games and graphics"
 
 [features]
 default = ["ruby-assert"]
