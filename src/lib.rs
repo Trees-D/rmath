@@ -2,3 +2,4 @@
 mod macros;
 
 pub mod algebra;
+pub mod color;
