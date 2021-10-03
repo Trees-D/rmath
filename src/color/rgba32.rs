@@ -7,6 +7,11 @@ use std::{
 
 use super::{RGBAf, RGBf, RGB, RGB24, RGBA};
 
+fn convert_f64_to_u8(v: f64) -> u8 {
+    let v = (v * 255.0 + 0.5) as i32;
+    v.max(0).min(255) as u8
+}
+
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub struct RGBA32 {
     r: u8,
@@ -64,7 +69,7 @@ impl IndexMut<usize> for RGBA32 {
 
 impl From<f64> for RGBA32 {
     fn from(rgb: f64) -> Self {
-        let rgb = (rgb * 255.0) as u8;
+        let rgb = convert_f64_to_u8(rgb);
         Self::new(rgb, rgb, rgb, rgb)
     }
 }
@@ -72,9 +77,9 @@ impl From<f64> for RGBA32 {
 impl From<(f64, f64, f64)> for RGBA32 {
     fn from(rgb: (f64, f64, f64)) -> Self {
         let (r, g, b) = rgb;
-        let r = (r * 255.0) as u8;
-        let g = (g * 255.0) as u8;
-        let b = (b * 255.0) as u8;
+        let r = convert_f64_to_u8(r);
+        let g = convert_f64_to_u8(g);
+        let b = convert_f64_to_u8(b);
         Self::new(r, g, b, 255)
     }
 }
@@ -82,29 +87,29 @@ impl From<(f64, f64, f64)> for RGBA32 {
 impl From<(f64, f64, f64, f64)> for RGBA32 {
     fn from(rgba: (f64, f64, f64, f64)) -> Self {
         let (r, g, b, a) = rgba;
-        let r = (r * 255.0) as u8;
-        let g = (g * 255.0) as u8;
-        let b = (b * 255.0) as u8;
-        let a = (a * 255.0) as u8;
+        let r = convert_f64_to_u8(r);
+        let g = convert_f64_to_u8(g);
+        let b = convert_f64_to_u8(b);
+        let a = convert_f64_to_u8(a);
         Self::new(r, g, b, a)
     }
 }
 
 impl From<[f64; 3]> for RGBA32 {
     fn from(rgb: [f64; 3]) -> Self {
-        let r = (rgb[0] * 255.0) as u8;
-        let g = (rgb[1] * 255.0) as u8;
-        let b = (rgb[2] * 255.0) as u8;
+        let r = convert_f64_to_u8(rgb[0]);
+        let g = convert_f64_to_u8(rgb[1]);
+        let b = convert_f64_to_u8(rgb[2]);
         Self::new(r, g, b, 255)
     }
 }
 
 impl From<[f64; 4]> for RGBA32 {
     fn from(rgba: [f64; 4]) -> Self {
-        let r = (rgba[0] * 255.0) as u8;
-        let g = (rgba[1] * 255.0) as u8;
-        let b = (rgba[2] * 255.0) as u8;
-        let a = (rgba[3] * 255.0) as u8;
+        let r = convert_f64_to_u8(rgba[0]);
+        let g = convert_f64_to_u8(rgba[1]);
+        let b = convert_f64_to_u8(rgba[2]);
+        let a = convert_f64_to_u8(rgba[3]);
         Self::new(r, g, b, a)
     }
 }

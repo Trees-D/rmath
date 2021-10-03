@@ -7,6 +7,11 @@ use std::{
 
 use super::{RGBf, RGB, RGB24, RGBA, RGBA32};
 
+fn convert_f32_to_u8(v: f32) -> u8 {
+    let v = (v * 255.0 + 0.5) as i32;
+    v.max(0).min(255) as u8
+}
+
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub struct RGBAf {
     r: f32,
@@ -652,18 +657,18 @@ impl RGBAf {
 
     pub fn to_rgb24(self) -> RGB24 {
         RGB24::new(
-            (self.r * 255.0) as u8,
-            (self.g * 255.0) as u8,
-            (self.b * 255.0) as u8,
+            convert_f32_to_u8(self.r),
+            convert_f32_to_u8(self.g),
+            convert_f32_to_u8(self.b),
         )
     }
 
     pub fn to_rgba32(self) -> RGBA32 {
         RGBA32::new(
-            (self.r * 255.0) as u8,
-            (self.g * 255.0) as u8,
-            (self.b * 255.0) as u8,
-            (self.a * 255.0) as u8,
+            convert_f32_to_u8(self.r),
+            convert_f32_to_u8(self.g),
+            convert_f32_to_u8(self.b),
+            convert_f32_to_u8(self.a),
         )
     }
 }

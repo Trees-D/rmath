@@ -7,6 +7,11 @@ use std::{
 
 use super::{RGBAf, RGBf, RGB, RGBA, RGBA32};
 
+fn convert_f64_to_u8(v: f64) -> u8 {
+    let v = (v * 255.0 + 0.5) as i32;
+    v.max(0).min(255) as u8
+}
+
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub struct RGB24 {
     r: u8,
@@ -52,7 +57,7 @@ impl IndexMut<usize> for RGB24 {
 
 impl From<f64> for RGB24 {
     fn from(rgb: f64) -> Self {
-        let rgb = (rgb * 255.0) as u8;
+        let rgb = convert_f64_to_u8(rgb);
         Self::new(rgb, rgb, rgb)
     }
 }
@@ -60,18 +65,18 @@ impl From<f64> for RGB24 {
 impl From<(f64, f64, f64)> for RGB24 {
     fn from(rgb: (f64, f64, f64)) -> Self {
         let (r, g, b) = rgb;
-        let r = (r * 255.0) as u8;
-        let g = (g * 255.0) as u8;
-        let b = (b * 255.0) as u8;
+        let r = convert_f64_to_u8(r);
+        let g = convert_f64_to_u8(g);
+        let b = convert_f64_to_u8(b);
         Self::new(r, g, b)
     }
 }
 
 impl From<[f64; 3]> for RGB24 {
     fn from(rgb: [f64; 3]) -> Self {
-        let r = (rgb[0] * 255.0) as u8;
-        let g = (rgb[1] * 255.0) as u8;
-        let b = (rgb[2] * 255.0) as u8;
+        let r = convert_f64_to_u8(rgb[0]);
+        let g = convert_f64_to_u8(rgb[1]);
+        let b = convert_f64_to_u8(rgb[2]);
         Self::new(r, g, b)
     }
 }
