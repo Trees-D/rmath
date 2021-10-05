@@ -486,7 +486,7 @@ impl Mat4d {
         .mul(det.recip())
     }
 
-    pub fn tray_inverse(&self) -> Option<Self> {
+    pub fn try_inverse(&self) -> Option<Self> {
         let det = self.determinant();
         if det.abs() < f64::EPSILON {
             return None;

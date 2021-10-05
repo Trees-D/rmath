@@ -265,7 +265,7 @@ impl Mat2d {
         Self::new(vec2d(a00, a10), vec2d(a01, a11)).mul(inv_det)
     }
 
-    pub fn tray_inverse(&self) -> Option<Self> {
+    pub fn try_inverse(&self) -> Option<Self> {
         let det = self.determinant();
         if det.abs() < f64::EPSILON {
             return None;
