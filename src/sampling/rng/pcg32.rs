@@ -4,7 +4,7 @@ use std::fmt::Display;
 
 const MULTIPLIER: u64 = 6364136223846793005;
 
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub struct Pcg32 {
     state: u64,
     increment: u64,
@@ -55,6 +55,14 @@ impl Pcg32 {
         (y << 32) | x
     }
 
+    pub fn next_f32(&mut self) -> f32 {
+        0.99999994f32.min(self.next_u32() as f32 * 2.3283064365386963e-10f32)
+    }
+
+    pub fn next_f64(&mut self) -> f64 {
+        0.99999999999999989f64.min(self.next_u32() as f64 * 2.3283064365386963e-10f64)
+    }
+
     pub fn advance(&mut self, steps: u64) {
         let mut acc_mult = 1u64;
         let mut acc_plus = 0u64;
@@ -73,13 +81,5 @@ impl Pcg32 {
         }
 
         self.state = acc_mult.wrapping_mul(self.state).wrapping_add(acc_plus)
-    }
-
-    pub fn next_f32(&mut self) -> f32 {
-        0.99999994f32.min(self.next_u32() as f32 * 2.3283064365386963e-10f32)
-    }
-
-    pub fn next_f64(&mut self) -> f64 {
-        0.99999999999999989f64.min(self.next_u32() as f64 * 2.3283064365386963e-10f64)
     }
 }
