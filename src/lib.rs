@@ -3,3 +3,4 @@ mod macros;
 
 pub mod algebra;
 pub mod color;
+pub mod geometry;
