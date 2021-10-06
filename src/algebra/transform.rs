@@ -46,6 +46,14 @@ impl Display for Transform {
     }
 }
 
+impl Mul<Transform> for Transform {
+    type Output = Transform;
+
+    fn mul(self, rhs: Transform) -> Self::Output {
+        self.apply(rhs)
+    }
+}
+
 impl Transform {
     pub fn from_matrix4d(matrix: Mat4d) -> Self {
         Self { matrix }
@@ -68,11 +76,55 @@ impl Transform {
     }
 }
 
-impl Mul<Transform> for Transform {
-    type Output = Transform;
+impl Transform {
+    pub fn from_translation(translate: Vec3d) -> Self {
+        Self::from_matrix4d(Mat4d::translation(translate))
+    }
 
-    fn mul(self, rhs: Transform) -> Self::Output {
-        self.apply(rhs)
+    pub fn from_rotation_x(angle: f64) -> Self {
+        Self::from_matrix4d(Mat4d::rotation_x(angle))
+    }
+
+    pub fn from_rotation_y(angle: f64) -> Self {
+        Self::from_matrix4d(Mat4d::rotation_y(angle))
+    }
+    
+    pub fn from_rotation_z(angle: f64) -> Self {
+        Self::from_matrix4d(Mat4d::rotation_z(angle))
+    }
+
+    pub fn from_rotation_axis(axis: Vec3d, angle: f64) -> Self {
+        Self::from_matrix4d(Mat4d::rotation_axis(axis, angle))
+    }
+
+    pub fn from_scale(scale: Vec3d) -> Self {
+        Self::from_matrix4d(Mat4d::scale(scale))
+    }
+}
+
+impl Transform {
+    pub fn translate(&self, translate: Vec3d) -> Self {
+        self.apply_matrix4d(Mat4d::translation(translate))
+    }
+
+    pub fn rotate_x(&self, angle: f64) -> Self {
+        self.apply_matrix4d(Mat4d::rotation_x(angle))
+    }
+
+    pub fn rotate_y(&self, angle: f64) -> Self {
+        self.apply_matrix4d(Mat4d::rotation_y(angle))
+    }
+
+    pub fn rotate_z(&self, angle: f64) -> Self {
+        self.apply_matrix4d(Mat4d::rotation_z(angle))
+    }
+
+    pub fn rotate_axis(&self, axis: Vec3d, angle: f64) -> Self {
+        self.apply_matrix4d(Mat4d::rotation_axis(axis, angle))
+    }
+
+    pub fn scale(&self, scale: Vec3d) -> Self {
+        self.apply_matrix4d(Mat4d::scale(scale))
     }
 }
 
