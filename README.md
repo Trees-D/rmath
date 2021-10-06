@@ -15,3 +15,27 @@ A math library implemented by Rust.
 - transform
   - `Transform`
   - trait `Transformable`
+
+## color
+
+- `f32` Type
+  - `RGBf`, `RGBAf`
+- `f64` Type
+  - `RGB`, `RGBA`
+- `u8` Type
+  - `RGB24`, `RGB32`
+
+## geometry
+
+- ray
+  - `Ray`
+
+## sampling
+
+- rng
+  - `Pcg32`
+- method
+  - `concentric_sample_disk`
+  - `uniform_sample_disk`
+  - `uniform_sample_sphere`
+  - `uniform_sample_hemisphere`
