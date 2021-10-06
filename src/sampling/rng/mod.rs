@@ -1,8 +1,8 @@
 #![allow(dead_code)]
 
-mod pcg32;
 use std::fmt::Display;
 
+mod pcg32;
 pub use pcg32::Pcg32;
 
 #[derive(Clone, Copy, PartialEq, Debug)]
