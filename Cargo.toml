@@ -3,7 +3,7 @@ name = "ruby-math"
 version = "0.1.0"
 edition = "2018"
 authors = ["DArbres <paladin100100@gmail.com>"]
-license = "GPL-3.0 License"
+license = "GPL-3.0"
 repository = "https://github.com/Trees-D/rmath"
 description = "A simple 3D math library for games and graphics"
 
