@@ -27,6 +27,8 @@ A math library implemented by Rust.
 
 ## geometry
 
+- bounds
+  - `Bounds3`
 - ray
   - `Ray`
 
