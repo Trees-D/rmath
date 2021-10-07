@@ -1,5 +1,5 @@
 [package]
-name = "rmath"
+name = "ruby-math"
 version = "0.1.0"
 edition = "2018"
 authors = ["DArbres <paladin100100@gmail.com>"]
