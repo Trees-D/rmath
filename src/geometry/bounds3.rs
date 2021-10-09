@@ -156,15 +156,15 @@ impl Bounds3 {
 
 impl Transformable for Bounds3 {
     fn apply(&self, transform: Transform) -> Self {
-        let p = transform.transform_point3d((*self)[0]);
+        let p = transform.transform_point3d(self.corner(0));
         Self::new(p, p)
-            .union_point(transform.transform_point3d((*self)[1]))
-            .union_point(transform.transform_point3d((*self)[2]))
-            .union_point(transform.transform_point3d((*self)[3]))
-            .union_point(transform.transform_point3d((*self)[4]))
-            .union_point(transform.transform_point3d((*self)[5]))
-            .union_point(transform.transform_point3d((*self)[6]))
-            .union_point(transform.transform_point3d((*self)[7]))
+            .union_point(transform.transform_point3d(self.corner(1)))
+            .union_point(transform.transform_point3d(self.corner(2)))
+            .union_point(transform.transform_point3d(self.corner(3)))
+            .union_point(transform.transform_point3d(self.corner(4)))
+            .union_point(transform.transform_point3d(self.corner(5)))
+            .union_point(transform.transform_point3d(self.corner(6)))
+            .union_point(transform.transform_point3d(self.corner(7)))
     }
 
     fn apply_matrix4d(&self, matrix: Mat4d) -> Self {
