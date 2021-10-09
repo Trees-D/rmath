@@ -136,21 +136,13 @@ impl Transform {
     pub fn transform_point3f(&self, point: Vec3f) -> Vec3f {
         let p = point.to_homogeneous_coord_point().to_vec4d();
         let p = self.transform_homogeneous_coord(p);
-        if p.w().abs() > f64::EPSILON {
-            (p.xyz() / p.w()).to_vec3f()
-        } else {
-            p.xyz().to_vec3f()
-        }
+        (p.xyz() / p.w()).to_vec3f()
     }
 
     pub fn transform_vector3f(&self, vector: Vec3f) -> Vec3f {
         let v = vector.to_homogeneous_coord_vector().to_vec4d();
         let v = self.transform_homogeneous_coord(v);
-        if v.w().abs() > f64::EPSILON {
-            (v.xyz() / v.w()).to_vec3f()
-        } else {
-            v.xyz().to_vec3f()
-        }
+        v.xyz().to_vec3f()
     }
 
     pub fn transform_normal3f(&self, normal: Vec3f) -> Vec3f {
@@ -163,21 +155,13 @@ impl Transform {
     pub fn transform_point3d(&self, point: Vec3d) -> Vec3d {
         let p = point.to_homogeneous_coord_point();
         let p = self.transform_homogeneous_coord(p);
-        if p.w().abs() > f64::EPSILON {
-            p.xyz() / p.w()
-        } else {
-            p.xyz()
-        }
+        p.xyz() / p.w()
     }
 
     pub fn transform_vector3d(&self, vector: Vec3d) -> Vec3d {
         let v = vector.to_homogeneous_coord_vector();
         let v = self.transform_homogeneous_coord(v);
-        if v.w().abs() > f64::EPSILON {
-            v.xyz() / v.w()
-        } else {
-            v.xyz()
-        }
+        v.xyz()
     }
 
     pub fn transform_normal3d(&self, normal: Vec3d) -> Vec3d {
