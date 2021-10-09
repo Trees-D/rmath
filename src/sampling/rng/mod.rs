@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 
+use chrono::prelude::*;
 use std::fmt::Display;
 
 mod pcg32;
@@ -9,6 +10,12 @@ pub use pcg32::Pcg32;
 pub enum Rng {
     Pcg32(Pcg32),
     Default,
+}
+
+pub fn rng() -> Rng {
+    let mut pcg32 = Pcg32::default();
+    pcg32.advance(Local::now().timestamp_millis() as u64);
+    Rng::Pcg32(pcg32)
 }
 
 pub fn rng_pcg32() -> Rng {
