@@ -1,7 +1,7 @@
 use crate::algebra::{vec2d, vec3d, Vec2d, Vec3d};
 
 mod rng;
-pub use rng::{rng, rng_pcg32, Pcg32, Rng};
+pub use rng::{rng_pcg32, Pcg32, Rng};
 
 pub fn concentric_sample_disk(u: Vec2d) -> Vec2d {
     let u = u * 2.0 - 1.0;
