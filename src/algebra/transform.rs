@@ -88,7 +88,7 @@ impl Transform {
     pub fn from_rotation_y(angle: f64) -> Self {
         Self::from_matrix4d(Mat4d::rotation_y(angle))
     }
-    
+
     pub fn from_rotation_z(angle: f64) -> Self {
         Self::from_matrix4d(Mat4d::rotation_z(angle))
     }
@@ -157,11 +157,7 @@ impl Transform {
         let m = self.matrix.inverse().transpose();
         let n = normal.to_homogeneous_coord_vector().to_vec4d();
         let n = m * n;
-        if n.w().abs() > f64::EPSILON {
-            (n.xyz() / n.w()).to_vec3f()
-        } else {
-            n.xyz().to_vec3f()
-        }
+        n.xyz().normalize().to_vec3f()
     }
 
     pub fn transform_point3d(&self, point: Vec3d) -> Vec3d {
@@ -188,11 +184,7 @@ impl Transform {
         let m = self.matrix.inverse().transpose();
         let n = normal.to_homogeneous_coord_vector();
         let n = m * n;
-        if n.w().abs() > f64::EPSILON {
-            n.xyz() / n.w()
-        } else {
-            n.xyz()
-        }
+        n.xyz().normalize()
     }
 
     pub fn transform<T: Transformable>(&self, object: T) -> T {
