@@ -54,6 +54,9 @@ pub fn cosine_sample_hemisphere(n: Vec3d, u: Vec2d) -> (Vec3d, f64) {
     let d = concentric_sample_disk(u);
     let z = 0.0f64.max(1.0 - d.x() * d.x() - d.y() * d.y()).sqrt();
     let pdf = z * std::f64::consts::FRAC_1_PI;
+    if vec3d(0.0, 0.0, -1.0).eq(&n) {
+        return (vec3d(d.x(), d.y(), -z), pdf);
+    }
     let d = vec3d(d.x(), d.y(), z);
     let n0 = vec3d(0.0, 0.0, 1.0);
     let axis = n0.cross(n).normalize();
